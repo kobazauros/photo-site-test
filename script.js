@@ -35,7 +35,7 @@ window.addEventListener('DOMContentLoaded', () => {
     <div class="lightbox-inner">
       <img class="lightbox-img" alt="">
       <div class="protect-layer"></div>
-      <div class="lightbox-credit">© 2025 Kevin Balta – No unauthorized use</div>
+      <div class="lightbox-credit">© 2025 Korvin Balta – No unauthorized use</div>
     </div>
   `;
   document.body.appendChild(lb);
