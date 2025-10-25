@@ -624,3 +624,95 @@ img {
     white-space: nowrap;
   }
 }
+
+/* =============================
+   LIGHTBOX PROTECTION ADD-ONS
+   ============================= */
+
+/* Transparent layer above the image:
+   - blocks drag
+   - blocks right-click on img itself
+   - blocks long-press save on mobile */
+.protect-layer {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  pointer-events: auto;
+  user-select: none;
+  /* leave cursor control to .lightbox-inner */
+}
+
+/* Credit / ownership message */
+.lightbox-credit {
+  position: absolute;
+  left: 1rem;
+  bottom: 1rem;
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  line-height: 1.4;
+  color: rgba(255,255,255,0.6);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+  user-select: none;
+  pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .lightbox-credit {
+    font-size: 0.6rem;
+    left: 0.75rem;
+    bottom: 0.75rem;
+  }
+}
+
+/* Reinforce interaction lock on the displayed image */
+.lightbox-img {
+  pointer-events: none;       /* can't click / drag img itself */
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ============================================
+   WATERMARK POSITION / RESPONSIVE CREDIT
+   ============================================ */
+
+/* default (landscape / wide) */
+.lightbox-credit {
+  position: absolute;
+  left: 50%;
+  bottom: 3%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.7);
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  line-height: 1.4;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  z-index: 1200; /* stay above image */
+}
+
+/* tweak size for very small screens */
+@media (max-width: 480px) {
+  .lightbox-credit {
+    font-size: 0.6rem;
+    bottom: 4%;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* portrait mode:
+   we add .portrait dynamically via JS to BOTH the img and the credit.
+   When .portrait is present on .lightbox-credit, we center it vertically.
+*/
+.lightbox-credit.portrait {
+  /* portrait uses the same placement as default */
+  bottom: 3%;
+  top: auto;
+  transform: translateX(-50%);
+}
