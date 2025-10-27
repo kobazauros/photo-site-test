@@ -1,12 +1,14 @@
 backend:
   name: github
-  repo: kobazauros/photo-site-test
-  branch: main
-  base_url: https://kevinroden.netlify.app
-  auth_endpoint: /api/auth
+  repo: kobazauros/photo-site-test          # your GitHub repo, owner/name
+  branch: main                              # the branch you deploy from
+  app_id: Ov23liDyk4UTOrDqwnUH               # same as GITHUB_CLIENT_ID
+  auth_scope: repo
+  base_url: https://kevinroden.netlify.app  # your Netlify site URL (no /api/auth)
+  cms_label_prefix: "[Decap]"
 
-media_folder: "images/uploads"
-public_folder: "images/uploads"
+media_folder: "images/uploads"              # where uploaded images go in the repo
+public_folder: "/images/uploads"            # how the site will reference them
 
 collections:
   - name: "models"
@@ -14,38 +16,10 @@ collections:
     label_singular: "Model Set"
     folder: "content/models"
     create: true
-    slug: "{{slug}}"
     format: "json"
-    extension: "json"
-    fields:
-      - { name: "name", label: "Model Name", widget: "string" }
-      - { name: "title", label: "Session Title / Location", widget: "string" }
-      - { name: "cover", label: "Cover Image", widget: "image", hint: "Used as the tile thumbnail on the Models page." }
-      - label: "Gallery Images"
-        name: "images"
-        widget: "list"
-        hint: "Upload the full web-sized set."
-        field:
-          name: "image"
-          label: "Image"
-          widget: "image"
-
-  - name: "nature"
-    label: "Nature"
-    label_singular: "Nature Set"
-    folder: "content/nature"
-    create: true
     slug: "{{slug}}"
-    format: "json"
-    extension: "json"
     fields:
-      - { name: "name", label: "Series Name", widget: "string" }
-      - { name: "title", label: "Location / Mood", widget: "string" }
-      - { name: "cover", label: "Cover Image", widget: "image" }
-      - label: "Gallery Images"
-        name: "images"
-        widget: "list"
-        field:
-          name: "image"
-          label: "Image"
-          widget: "image"
+      - { name: "modelName", label: "Model Name", widget: "string" }
+      - { name: "sessionTitle", label: "Session Title", widget: "string" }
+      - { name: "coverImage", label: "Cover Image", widget: "image" }
+      - { name: "images", label: "Gallery Images", widget: "list", field: { name: "src", label: "Image", widget: "image" } }
