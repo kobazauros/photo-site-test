@@ -1,25 +1,23 @@
 backend:
-  name: github
-  repo: kobazauros/photo-site-test          # your GitHub repo, owner/name
-  branch: main                              # the branch you deploy from
-  app_id: Ov23liDyk4UTOrDqwnUH               # same as GITHUB_CLIENT_ID
-  auth_scope: repo
-  base_url: https://kevinroden.netlify.app  # your Netlify site URL (no /api/auth)
-  auth_endpoint: /api/auth
+  name: git-gateway
+  branch: main
 
-media_folder: "images/uploads"              # where uploaded images go in the repo
-public_folder: "/images/uploads"            # how the site will reference them
+local_backend: false
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
 
 collections:
   - name: "models"
     label: "Models"
-    label_singular: "Model Set"
+    label_singular: "Model"
     folder: "content/models"
     create: true
-    format: "json"
     slug: "{{slug}}"
     fields:
-      - { name: "modelName", label: "Model Name", widget: "string" }
-      - { name: "sessionTitle", label: "Session Title", widget: "string" }
-      - { name: "coverImage", label: "Cover Image", widget: "image" }
-      - { name: "images", label: "Gallery Images", widget: "list", field: { name: "src", label: "Image", widget: "image" } }
+      - { name: "name", label: "Model Name", widget: "string" }
+      - { name: "title", label: "Set Title / Subtitle", widget: "string" }
+      - { name: "cover", label: "Cover Image", widget: "image" }
+      - { name: "images", label: "Gallery Images", widget: "list", field: { name: "image", label: "Image", widget: "image" } }
+      - { name: "published", label: "Published", widget: "boolean", default: true }
+      - { name: "date", label: "Date", widget: "datetime", format: "YYYY-MM-DD" }
