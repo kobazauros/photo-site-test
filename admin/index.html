@@ -8,63 +8,65 @@
   <body>
     <div id="nc-root"></div>
 
-    <!-- 1. Load Netlify Identity Widget first -->
+    <!-- Load Netlify Identity Widget FIRST -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
     <script>
-      // Helper: load Decap CMS script dynamically only when allowed
+      // Helper: only call this once, after we know the user is authenticated
       function loadCMS() {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js';
+        if (window.__CMS_LOADED__) return; // guard so we don't double-load
+        window.__CMS_LOADED__ = true;
+
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js";
         document.body.appendChild(script);
       }
 
-      // Init identity
+      // Initialize Netlify Identity
       netlifyIdentity.init();
 
+      // Support special first-time / recovery flows from email links
       const hash = window.location.hash || "";
 
-      // Case A: invite flow (first-time account setup)
-      if (hash.includes('invite_token')) {
-        netlifyIdentity.on('init', () => {
-          // show signup modal so you can finish + set password
-          netlifyIdentity.open('signup');
+      if (hash.includes("invite_token")) {
+        // First-time invite: open signup so you can set password
+        netlifyIdentity.on("init", () => {
+          netlifyIdentity.open("signup");
         });
 
-        // after signup/login succeeds, load the CMS
-        netlifyIdentity.on('login', user => {
+        // After successful signup/login, load CMS
+        netlifyIdentity.on("login", user => {
           if (user) {
             loadCMS();
           }
         });
-      }
 
-      // Case B: password recovery / set password
-      else if (hash.includes('recovery_token')) {
-        netlifyIdentity.on('init', () => {
-          netlifyIdentity.open('recovery');
+      } else if (hash.includes("recovery_token")) {
+        // Password recovery / reset flow
+        netlifyIdentity.on("init", () => {
+          netlifyIdentity.open("recovery");
         });
 
-        netlifyIdentity.on('login', user => {
+        netlifyIdentity.on("login", user => {
           if (user) {
             loadCMS();
           }
         });
-      }
 
-      // Case C: normal visit to /admin/
-      else {
-        // Wait for identity to init, then check if user is already logged in
-        netlifyIdentity.on('init', user => {
+      } else {
+        // Normal /admin/ visit
+        netlifyIdentity.on("init", user => {
           if (user) {
-            // already authenticated => load CMS directly
+            // already logged in -> just load the CMS
             loadCMS();
           } else {
-            // not logged in => open login modal (this modal has "Forgot your password?")
-            netlifyIdentity.open('login');
-            // and when you do log in, load CMS
-            netlifyIdentity.on('login', u => {
+            // not logged in -> show login modal once
+            netlifyIdentity.open("login");
+
+            // when login succeeds, load CMS and close modal
+            netlifyIdentity.on("login", u => {
               if (u) {
+                netlifyIdentity.close();
                 loadCMS();
               }
             });
@@ -72,10 +74,10 @@
         });
       }
 
-      // Optional: if the user logs out from the widget while on /admin/,
-      // kick them back to homepage so strangers can't sit on /admin/.
-      netlifyIdentity.on('logout', () => {
-        window.location.replace('/');
+      // If the user logs out from the widget while on /admin/,
+      // bounce them back to homepage (public site).
+      netlifyIdentity.on("logout", () => {
+        window.location.replace("/");
       });
     </script>
   </body>
