@@ -5,7 +5,7 @@ backend:
   app_id: Ov23liDyk4UTOrDqwnUH               # same as GITHUB_CLIENT_ID
   auth_scope: repo
   base_url: https://kevinroden.netlify.app  # your Netlify site URL (no /api/auth)
-  cms_label_prefix: "[Decap]"
+  auth_endpoint: /api/auth
 
 media_folder: "images/uploads"              # where uploaded images go in the repo
 public_folder: "/images/uploads"            # how the site will reference them
