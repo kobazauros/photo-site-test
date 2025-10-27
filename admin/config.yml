@@ -1,0 +1,44 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "images/uploads"
+
+collections:
+  - name: "models"
+    label: "Models"
+    label_singular: "Model Set"
+    folder: "content/models"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { name: "name", label: "Model Name", widget: "string" }
+      - { name: "title", label: "Session Title / Location", widget: "string" }
+      - { name: "cover", label: "Cover Image", widget: "image", hint: "This will be shown as the tile on the models page." }
+      - label: "Gallery Images"
+        name: "images"
+        widget: "list"
+        hint: "Upload the full set for this session (web-sized)"
+        field:
+          name: "image"
+          label: "Image"
+          widget: "image"
+
+  - name: "nature"
+    label: "Nature"
+    label_singular: "Nature Set"
+    folder: "content/nature"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { name: "name", label: "Place / Series Name", widget: "string" }
+      - { name: "title", label: "Location / Mood", widget: "string" }
+      - { name: "cover", label: "Cover Image", widget: "image" }
+      - label: "Gallery Images"
+        name: "images"
+        widget: "list"
+        field:
+          name: "image"
+          label: "Image"
+          widget: "image"
