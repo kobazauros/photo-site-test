@@ -277,5 +277,21 @@
     </footer>
 
     <script src="script.js" defer></script>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script>
+    // Auto-open password / signup modal if we arrive via invite link or recovery link
+    if (window.location.hash && (
+        window.location.hash.includes('invite_token') ||
+        window.location.hash.includes('recovery_token')
+        )) {
+        netlifyIdentity.on('init', () => {
+        netlifyIdentity.open('signup'); // for invite_token
+        netlifyIdentity.open('recovery'); // for recovery_token
+        });
+        netlifyIdentity.init();
+    } else {
+        netlifyIdentity.init();
+    }
+    </script>    
 </body>
 </html>
