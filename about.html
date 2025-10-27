@@ -52,30 +52,5 @@
     </footer>
 
     <script src="script.js" defer></script>
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    <script>
-    // Always init the widget so netlifyIdentity is defined.
-    netlifyIdentity.init();
-
-    // If we landed here with an invite token or recovery token in the URL,
-    // open the right modal automatically so you can finish setup / set password.
-    (function () {
-        const hash = window.location.hash || "";
-
-        if (hash.includes('invite_token')) {
-        // User clicked the "Accept Invite" link
-        netlifyIdentity.on("init", () => {
-            netlifyIdentity.open("signup");
-        });
-        } else if (hash.includes('recovery_token')) {
-        // User clicked the "Recovery / Set Password" link
-        netlifyIdentity.on("init", () => {
-            netlifyIdentity.open("recovery");
-        });
-        }
-    })();
-    </script>
-
 </body>
 </html>
