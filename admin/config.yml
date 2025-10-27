@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
+  name: github
+  repo: kobazauros/photo-site-test
   branch: main
+  base_url: https://kevinroden.netlify.app
+  auth_endpoint: /api/auth
 
 media_folder: "images/uploads"
 public_folder: "images/uploads"
@@ -12,14 +15,16 @@ collections:
     folder: "content/models"
     create: true
     slug: "{{slug}}"
+    format: "json"
+    extension: "json"
     fields:
       - { name: "name", label: "Model Name", widget: "string" }
       - { name: "title", label: "Session Title / Location", widget: "string" }
-      - { name: "cover", label: "Cover Image", widget: "image", hint: "This will be shown as the tile on the models page." }
+      - { name: "cover", label: "Cover Image", widget: "image", hint: "Used as the tile thumbnail on the Models page." }
       - label: "Gallery Images"
         name: "images"
         widget: "list"
-        hint: "Upload the full set for this session (web-sized)"
+        hint: "Upload the full web-sized set."
         field:
           name: "image"
           label: "Image"
@@ -31,8 +36,10 @@ collections:
     folder: "content/nature"
     create: true
     slug: "{{slug}}"
+    format: "json"
+    extension: "json"
     fields:
-      - { name: "name", label: "Place / Series Name", widget: "string" }
+      - { name: "name", label: "Series Name", widget: "string" }
       - { name: "title", label: "Location / Mood", widget: "string" }
       - { name: "cover", label: "Cover Image", widget: "image" }
       - label: "Gallery Images"
