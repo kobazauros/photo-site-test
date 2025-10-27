@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Content Manager</title>
-
-    <!-- Decap CMS app -->
-    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </head>
   <body>
-    <!-- Decap will mount here -->
+    <!-- Decap will mount itself here -->
     <div id="nc-root"></div>
+
+    <!-- Load Decap *after* the body exists -->
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
   </body>
 </html>
