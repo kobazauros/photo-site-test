@@ -1,20 +1,20 @@
 // =======================================================
-// DYNAMIC CONTENT MODULE (V4: Correct Category Filtering)
+// FINAL CONSOLIDATED SCRIPT.JS (Dynamic Content & Custom Lightbox)
 // =======================================================
 
 // --- HYGRAPH CONFIG ---
-// 🚨 IMPORTANT: REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL VALUES 🚨
-const HYGRAPH_ENDPOINT = 'https://ap-south-1.cdn.hygraph.com/content/cmh8iphfl01xf07w7s3zgyjxz/master'; // Your Hygraph GraphQL endpoint
+const HYGRAPH_ENDPOINT = 'https://ap-south-1.cdn.hygraph.com/content/cmh8iphfl01xf07w7s3zgyjxz/master'; 
 
 // --- GraphQL Query to fetch all necessary data ---
+// Minimalist query structure that works with your security settings
 const ALBUMS_QUERY = `
 query GetAllAlbums {
-  photoAlbums(stage: PUBLISHED) {
+  photoAlbums { 
     title 
     subtitle
-    category # CRUCIAL: Used to filter content for the correct page
-    cover { url }
-    galleryImages { url }
+    category
+    cover 
+    galleryImages
   }
 }
 `;
@@ -27,14 +27,18 @@ async function fetchAlbums() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: ALBUMS_QUERY }),
         });
+
         if (!response.ok) {
-            console.error(`Hygraph API Error: ${response.status} ${response.statusText}`);
+            console.error(`🛑 HYGRAPH FETCH FAILED (Status: ${response.status})`);
             return [];
         }
+
         const json = await response.json();
+        // Return the array of albums, or an empty array if data path is missing
         return json.data.photoAlbums || [];
+
     } catch (error) {
-        console.error("Fetch failed:", error);
+        console.error("❌ NETWORK FETCH ERROR! Cannot reach the endpoint:", error);
         return []; 
     }
 }
@@ -44,33 +48,41 @@ function renderGallery(allAlbums, targetCategory) {
     const grid = document.querySelector('.portfolio-grid');
     if (!grid) return;
     
-    // 🚨 CORRECT FILTERING: Only render albums matching the page's category 🚨
-    const albumsToRender = allAlbums.filter(album => album.category === targetCategory);
+    // Filter the content based on the current page's category (ensuring case match)
+    const albumsToRender = allAlbums.filter(album => album.category.toLowerCase() === targetCategory.toLowerCase());
 
     let galleryHTML = '';
     albumsToRender.forEach(album => {
-        const imageList = album.galleryImages.map(img => img.url);
+        // --- DATA ACCESS FIX: Use Bracket Notation for guaranteed secure_url access ---
+        const imageList = album.galleryImages.map(img => img['secure_url']); 
         const imageListJSON = JSON.stringify(imageList);
-        const coverImageUrl = album.cover ? album.cover.url : '';
         
+        const coverImageUrl = album.cover ? album.cover['secure_url'] : '';
+        
+        // Fallback for missing title/subtitle
+        const title = album.title || 'Untitled Album';
+        const subtitle = album.subtitle || '';
+
         galleryHTML += `
             <a href="#"
                 class="grid-item"
                 style="background-image: url('${coverImageUrl}');"
                 data-images='${imageListJSON}'>
                 <div class="grid-item-title">
-                    <h3>${album.title} <span>${album.subtitle}</span></h3>
+                    <h3>${title} <span>${subtitle}</span></h3>
                 </div>
             </a>
         `;
     });
+    
+    // FINAL INJECTION
     grid.innerHTML = galleryHTML;
     
     // After rendering, bind the click handlers to the new elements
     bindDynamicTileClicks(); 
 }
 
-// 3. New Click Handler (Replaces the old hardcoded loop)
+// 3. New Click Handler (Attaches events to newly rendered tiles)
 function bindDynamicTileClicks() {
     document.querySelectorAll('.grid-item').forEach(tile => {
         tile.addEventListener('click', (e) => {
@@ -81,6 +93,7 @@ function bindDynamicTileClicks() {
 
             if (listAttr) {
                 try {
+                    // Crucial: parse the JSON string back into a JavaScript array
                     setArray = JSON.parse(listAttr);
                 } catch (err) {
                     console.error("Failed to parse JSON from data-images:", err);
@@ -88,7 +101,7 @@ function bindDynamicTileClicks() {
                 }
             }
             
-            // This assumes your custom openLightbox function is globally available
+            // This relies on the original openLightbox function defined below
             if (setArray.length && typeof openLightbox !== 'undefined') {
                  openLightbox(setArray, 0); 
             }
@@ -96,7 +109,7 @@ function bindDynamicTileClicks() {
     });
 }
 
-// 4. Initialization Function (Called immediately)
+// 4. Initialization Function (Where the dynamic process starts)
 async function initializeDynamicContent() {
     let targetCategory = '';
 
@@ -110,16 +123,13 @@ async function initializeDynamicContent() {
     // Only proceed if we are on a recognized gallery page
     if (targetCategory) {
         const allAlbums = await fetchAlbums(); 
-        renderGallery(allAlbums, targetCategory); // Passes the necessary filter!
+        renderGallery(allAlbums, targetCategory);
     }
 }
 
-// 5. Execute the initialization immediately
-initializeDynamicContent();
-
-// -------------------------------------------------------------------------
-
-
+// =======================================================
+// CORE ORIGINAL SCRIPT LOGIC (Lightbox, Helpers, Interactions)
+// =======================================================
 
 // Prevent right-click / long-press save (casual protection)
 document.addEventListener('contextmenu', function (e) {
@@ -127,7 +137,10 @@ document.addEventListener('contextmenu', function (e) {
 }, false);
 
 window.addEventListener('DOMContentLoaded', () => {
+  // 🚨 START THE DYNAMIC CONTENT PROCESS 🚨
+  // This executes the async fetch and renders the HTML grid.
   initializeDynamicContent();
+
   // --- HERO ANIMATION ---
   const hero = document.querySelector('.hero');
   if (hero) {
@@ -356,11 +369,13 @@ window.addEventListener('DOMContentLoaded', () => {
     };
   }
 
+  // --- THE CRITICAL GLOBAL FUNCTION ---
   function openLightbox(setArray, startIndex = 0) {
     currentSet = setArray;
     showImage(startIndex);
     lb.classList.add('open');
   }
+  window.openLightbox = openLightbox; // Expose the function globally
 
   function closeLightbox() {
     lb.classList.remove('open');
@@ -495,33 +510,18 @@ window.addEventListener('DOMContentLoaded', () => {
       closeLightbox();
     }
   });
-
-  // --- TILE CLICK HANDLER ---
-  document.querySelectorAll('.grid-item').forEach(tile => {
-    tile.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      const listAttr = tile.getAttribute('data-images');
-      let setArray = [];
-
-      if (listAttr) {
-        setArray = listAttr
-          .split(',')
-          .map(s => s.trim())
-          .filter(Boolean);
-      }
-
-      if (!setArray.length) {
-        const bg = tile.style.backgroundImage; // url("..."), maybe
-        if (bg && bg.startsWith('url(')) {
-          const url = bg.slice(5, -2);
-          setArray = [url];
-        }
-      }
-
-      if (!setArray.length) return;
-
-      openLightbox(setArray, 0);
+  
+  // --- PORTAL CARD TILT ---
+  document.querySelectorAll('.portal-link').forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = 'none';
     });
   });
+
 });
