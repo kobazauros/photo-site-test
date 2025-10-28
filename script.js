@@ -1,9 +1,133 @@
+// =======================================================
+// DYNAMIC CONTENT MODULE (V4: Correct Category Filtering)
+// =======================================================
+
+// --- HYGRAPH CONFIG ---
+// 🚨 IMPORTANT: REPLACE THESE PLACEHOLDERS WITH YOUR ACTUAL VALUES 🚨
+const HYGRAPH_ENDPOINT = 'https://ap-south-1.cdn.hygraph.com/content/cmh8iphfl01xf07w7s3zgyjxz/master'; // Your Hygraph GraphQL endpoint
+
+// --- GraphQL Query to fetch all necessary data ---
+const ALBUMS_QUERY = `
+query GetAllAlbums {
+  photoAlbums(stage: PUBLISHED) {
+    title 
+    subtitle
+    category # CRUCIAL: Used to filter content for the correct page
+    cover { url }
+    galleryImages { url }
+  }
+}
+`;
+
+// 1. Fetch data from the CMS API
+async function fetchAlbums() {
+    try {
+        const response = await fetch(HYGRAPH_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ query: ALBUMS_QUERY }),
+        });
+        if (!response.ok) {
+            console.error(`Hygraph API Error: ${response.status} ${response.statusText}`);
+            return [];
+        }
+        const json = await response.json();
+        return json.data.photoAlbums || [];
+    } catch (error) {
+        console.error("Fetch failed:", error);
+        return []; 
+    }
+}
+
+// 2. Build and inject the HTML tiles
+function renderGallery(allAlbums, targetCategory) {
+    const grid = document.querySelector('.portfolio-grid');
+    if (!grid) return;
+    
+    // 🚨 CORRECT FILTERING: Only render albums matching the page's category 🚨
+    const albumsToRender = allAlbums.filter(album => album.category === targetCategory);
+
+    let galleryHTML = '';
+    albumsToRender.forEach(album => {
+        const imageList = album.galleryImages.map(img => img.url);
+        const imageListJSON = JSON.stringify(imageList);
+        const coverImageUrl = album.cover ? album.cover.url : '';
+        
+        galleryHTML += `
+            <a href="#"
+                class="grid-item"
+                style="background-image: url('${coverImageUrl}');"
+                data-images='${imageListJSON}'>
+                <div class="grid-item-title">
+                    <h3>${album.title} <span>${album.subtitle}</span></h3>
+                </div>
+            </a>
+        `;
+    });
+    grid.innerHTML = galleryHTML;
+    
+    // After rendering, bind the click handlers to the new elements
+    bindDynamicTileClicks(); 
+}
+
+// 3. New Click Handler (Replaces the old hardcoded loop)
+function bindDynamicTileClicks() {
+    document.querySelectorAll('.grid-item').forEach(tile => {
+        tile.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            const listAttr = tile.getAttribute('data-images');
+            let setArray = [];
+
+            if (listAttr) {
+                try {
+                    setArray = JSON.parse(listAttr);
+                } catch (err) {
+                    console.error("Failed to parse JSON from data-images:", err);
+                    return;
+                }
+            }
+            
+            // This assumes your custom openLightbox function is globally available
+            if (setArray.length && typeof openLightbox !== 'undefined') {
+                 openLightbox(setArray, 0); 
+            }
+        });
+    });
+}
+
+// 4. Initialization Function (Called immediately)
+async function initializeDynamicContent() {
+    let targetCategory = '';
+
+    // Determine Page Type (matching your HTML titles)
+    if (document.title.includes('Models')) {
+        targetCategory = 'FIGURES'; 
+    } else if (document.title.includes('Nature')) {
+        targetCategory = 'FORMS';
+    } 
+    
+    // Only proceed if we are on a recognized gallery page
+    if (targetCategory) {
+        const allAlbums = await fetchAlbums(); 
+        renderGallery(allAlbums, targetCategory); // Passes the necessary filter!
+    }
+}
+
+// 5. Execute the initialization immediately
+initializeDynamicContent();
+
+// -------------------------------------------------------------------------
+
+
+
 // Prevent right-click / long-press save (casual protection)
 document.addEventListener('contextmenu', function (e) {
   e.preventDefault();
 }, false);
 
 window.addEventListener('DOMContentLoaded', () => {
+  initializeDynamicContent();
   // --- HERO ANIMATION ---
   const hero = document.querySelector('.hero');
   if (hero) {
