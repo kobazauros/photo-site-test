@@ -807,3 +807,22 @@ img {
     transform: translateY(0);
   }
 }
+/* =============================
+   GRID LOADER
+   ============================= */
+.grid-loader {
+  text-align: center;
+  /* Make sure it spans both columns */
+  grid-column: 1 / -1; 
+  
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  
+  /* This padding is the key to preventing the jump */
+  padding: 6rem 0; 
+  opacity: 0.8;
+}

@@ -114,8 +114,8 @@ function renderGallery(albumsToRender, targetCategory) {
     console.log(`DEBUG: Rendering ${albumsToRender.length} albums for category '${targetCategory}'.`);
 
     if (albumsToRender.length === 0 && currentOffset === 0) {
-        // Only show this message if it's the *first* load and nothing was found
-        grid.innerHTML = `<p style="text-align:center;">No ${targetCategory.toLowerCase()} galleries found.</p>`;
+        // First load, but nothing found. Replace loader with a new message.
+        grid.innerHTML = `<p class="grid-loader">No ${targetCategory.toLowerCase()} galleries found.</p>`;
         return;
     }
 
@@ -151,11 +151,17 @@ function renderGallery(albumsToRender, targetCategory) {
         }
     });
     
-    // FINAL INJECTION (Append new items)
-    grid.innerHTML += galleryHTML;
+    // --- UPDATED FINAL INJECTION ---
+    if (currentOffset === 0) {
+        // This is the FIRST render. Overwrite the <p class="grid-loader">.
+        grid.innerHTML = galleryHTML; 
+    } else {
+        // This is a "Load More" click. Append to the existing tiles.
+        grid.innerHTML += galleryHTML; 
+    }
     
     // 3. Attach click handlers immediately after injection
-    // This is ESSENTIAL for the lightbox to work on new items
+    // (This part is unchanged)
     if (typeof bindDynamicTileClicks === 'function') {
         bindDynamicTileClicks(); 
     } else {
