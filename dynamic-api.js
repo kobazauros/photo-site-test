@@ -59,6 +59,20 @@ function renderGallery(allAlbums, targetCategory) {
     const albumsToRender = allAlbums.filter(album => album.category.toLowerCase() === targetCategory.toLowerCase());
 
     let galleryHTML = '';
+    // --- ADD DEBUG LOG HERE ---
+    console.log(`DEBUG: Filtered ${albumsToRender.length} albums for category ${targetCategory}. Full data received:`, allAlbums);
+
+    albumsToRender.forEach(album => {
+        // --- ADD DETAILED LOG INSIDE LOOP ---
+        console.log(`DEBUG: Processing Album Title: ${album.title}, Category: ${album.category}, Cover Exists: ${!!album.cover}, Gallery Images Count: ${album.galleryImages ? album.galleryImages.length : 0}`);
+
+        try {
+            // ... (your existing imageList, coverImageUrl, and galleryHTML += logic) ...
+        } catch (e) {
+             console.error(`CRITICAL RENDER CRASH on album ${album.title}:`, e);
+             return; 
+         }
+    });
     albumsToRender.forEach(album => {
         // --- FINAL FIX: Access the secure_url property via safe bracket notation ---
         const imageList = album.galleryImages.map(img => img['secure_url']); 
