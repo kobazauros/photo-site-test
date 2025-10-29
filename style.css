@@ -328,6 +328,9 @@ img {
   box-shadow: 0 20px 40px rgba(0,0,0,0.6);
   transition: transform .4s ease, box-shadow .4s ease;
   cursor: pointer;
+  opacity: 0; /* Start hidden */
+  animation: fadeIn 0.6s ease forwards;
+  animation-delay: 0.1s;
 }
 .grid-item:hover {
   transform: scale(1.03);
@@ -715,4 +718,92 @@ img {
   bottom: 3%;
   top: auto;
   transform: translateX(-50%);
+}
+
+/* =============================
+   LOAD MORE BUTTON (Nav Link Style)
+   ============================= */
+
+.load-more-container {
+  text-align: center;
+  padding: 1rem 0 5rem; /* Container still provides spacing */
+}
+
+#load-more-btn {
+  /* --- Copied from .main-nav a --- */
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  text-decoration: none;
+  position: relative;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  transition: color .3s ease, opacity .3s ease;
+  opacity: 0.9;
+  
+  /* --- Button-specific resets --- */
+  background: transparent;
+  border: none;
+  padding: 0; /* Remove padding so underline sits correctly */
+  cursor: pointer;
+}
+
+/* --- Underline (copied from .main-nav a::after) --- */
+#load-more-btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px; /* Sits 6px below the text */
+  height: 1px;
+  background: var(--accent-warm);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .25s ease;
+}
+
+/* --- Hover State (copied from .main-nav a:hover) --- */
+#load-more-btn:hover {
+  color: var(--accent-warm);
+  opacity: 1;
+}
+
+/* --- Underline on Hover (copied from .main-nav a:hover::after) --- */
+#load-more-btn:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- Disabled State (for "Loading...") --- */
+#load-more-btn:disabled {
+  color: #555;
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* Ensure disabled button can't be hovered */
+#load-more-btn:disabled:hover {
+  color: #555;
+  opacity: 0.5;
+}
+#load-more-btn:disabled:hover::after {
+  transform: scaleX(0); /* No underline on disabled hover */
+}
+
+/* =============================
+   ANIMATIONS
+   ============================= */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px); /* Start slightly lower */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

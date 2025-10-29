@@ -33,10 +33,10 @@ let baseImgW    = 0;
 let baseImgH    = 0;
 let scaleNative = 2; 
 
-// --- Lightbox DOM Elements (defined globally after DOM build) ---
+// --- Lightbox DOM Elements (defined globally, populated by buildLightboxDOM) ---
 let lb, closeBtn, arrowLeft, arrowRight, inner, imgEl, creditEl;
 
-// --- CORE LIGHTBOX FUNCTIONS (Defined globally) ---
+// --- CORE LIGHTBOX FUNCTIONS ---
 function applyPortraitClass() {
     if (!imgEl || !imgEl.naturalWidth || !imgEl.naturalHeight) return;
     const ratio = imgEl.naturalWidth / imgEl.naturalHeight;
@@ -150,11 +150,10 @@ function showNext() {
     showImage(newIndex);
 }
 
-// 3. New Click Handler (Attaches events to newly rendered tiles)
-// This function is defined globally so dynamic-api.js can call it
+// --- Click Handler (Attaches events to newly rendered tiles) ---
 function bindDynamicTileClicks() {
     document.querySelectorAll('.grid-item').forEach(tile => {
-        // Remove listener first to prevent duplicates if this is called multiple times
+        // Remove listener first to prevent duplicates
         tile.removeEventListener('click', handleTileClick); 
         tile.addEventListener('click', handleTileClick);
     });
@@ -183,27 +182,10 @@ function handleTileClick(e) {
     }
 }
 
+// --- PAGE-SPECIFIC INITIALIZERS ---
 
-// --- MAIN INITIALIZATION LISTENER ---
-window.addEventListener('DOMContentLoaded', () => {
-
-  // 🚨 START THE DYNAMIC CONTENT PROCESS 🚨
-  if (typeof initializeDynamicContent === 'function') {
-      initializeDynamicContent(); // Calls the function from dynamic-api.js
-  } else {
-      // This error will fire on index.html, which is safe to ignore
-      console.log("Note: initializeDynamicContent not found (expected on gallery pages).");
-  }
-
-
-  // --- HERO ANIMATION ---
-  const hero = document.querySelector('.hero');
-  if (hero) {
-    hero.classList.add('reveal');
-    requestAnimationFrame(() => hero.classList.add('in'));
-  }
-
-  // --- BUILD LIGHTBOX DOM ---
+/** Builds the Lightbox HTML and injects it into the page. */
+function buildLightboxDOM() {
   lb = document.createElement('div');
   lb.className = 'lightbox';
   lb.innerHTML = `
@@ -219,14 +201,17 @@ window.addEventListener('DOMContentLoaded', () => {
   `;
   document.body.appendChild(lb);
 
+  // Populate global DOM variables
   closeBtn    = lb.querySelector('.lightbox-close');
   arrowLeft   = lb.querySelector('.lightbox-arrow-left');
   arrowRight  = lb.querySelector('.lightbox-arrow-right');
   inner       = lb.querySelector('.lightbox-inner');
   imgEl       = lb.querySelector('.lightbox-img');
   creditEl    = lb.querySelector('.lightbox-credit');
+}
 
-  // --- ATTACH LIGHTBOX EVENT HANDLERS ---
+/** Attaches all event listeners for the lightbox. */
+function attachLightboxHandlers() {
   inner.addEventListener('click', () => {
     if (movedDuringDrag) { movedDuringDrag = false; return; }
     if (!zoomed) { enterZoomMode(); } else { enterFitMode(); }
@@ -268,21 +253,58 @@ window.addEventListener('DOMContentLoaded', () => {
   });
   closeBtn.addEventListener('click', () => { if (zoomed) { enterFitMode(); } else { closeLightbox(); } });
   lb.addEventListener('click', (e) => { if (e.target === lb) { closeLightbox(); } });
-  
-  // --- PORTAL CARD TILT (Only runs on index.html) ---
-  document.querySelectorAll('.portal-link').forEach(card => {
-    card.addEventListener('mousemove', (e) => {
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      card.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
-    });
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'none';
-    });
-  });
+}
 
-  // --- NO LONGER NEEDED: The old static tile click handler is removed. ---
-  // bindDynamicTileClicks() handles this now.
+/** Attaches the 3D tilt effect to the portal cards. */
+function attachPortalTilt() {
+    // Note: The class in your index.html is .portal-card
+    document.querySelectorAll('.portal-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const r = card.getBoundingClientRect();
+            const x = (e.clientX - r.left) / r.width - 0.5;
+            const y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transform = `perspective(800px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'none';
+        });
+    });
+}
 
+/** Runs the fade-in animation for the hero section. */
+function animateHero() {
+    const hero = document.querySelector('.hero');
+    hero.classList.add('reveal'); // Make it visible but at start state
+    // requestAnimationFrame ensures the 'reveal' class is applied before 'in'
+    requestAnimationFrame(() => hero.classList.add('in')); // Start the transition
+}
+
+// --- MAIN INITIALIZATION LISTENER ---
+window.addEventListener('DOMContentLoaded', () => {
+
+    // Check what page we're on by looking for unique elements
+    const onIndexPage   = document.querySelector('.hero');
+    const onGalleryPage = document.querySelector('.portfolio-grid');
+
+    // 1. Run Homepage-specific JavaScript
+    if (onIndexPage) {
+        animateHero();
+        attachPortalTilt();
+    }
+
+    // 2. Run Gallery-page-specific JavaScript
+    if (onGalleryPage) {
+        // Build the lightbox HTML and attach its listeners
+        buildLightboxDOM(); 
+        attachLightboxHandlers();
+        
+        // Start the process of fetching and rendering gallery tiles
+        if (typeof initializeDynamicContent === 'function') {
+            initializeDynamicContent(); // Calls the function from dynamic-api.js
+        } else {
+            console.error("CRITICAL: .portfolio-grid exists but initializeDynamicContent() is not defined. Is dynamic-api.js loaded?");
+        }
+    }
+
+    // 3. (No specific JS needed for about.html)
 });
