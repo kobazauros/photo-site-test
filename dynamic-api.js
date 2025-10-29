@@ -4,8 +4,7 @@
 // =======================================================
 
 // --- HYGRAPH CONFIG ---
-// 🚨 IMPORTANT: Ensure this endpoint URL is correct 🚨
-//const HYGRAPH_ENDPOINT = 'https://ap-south-1.cdn.hygraph.com/content/cmh8iphfl01xf07w7s3zgyjxz/master'; 
+const HYGRAPH_ENDPOINT = 'https://ap-south-1.cdn.hygraph.com/content/cmh8iphfl01xf07w7s3zgyjxz/master'; 
 
 // --- GraphQL Query to fetch all necessary data ---
 const ALBUMS_QUERY = `
@@ -37,7 +36,7 @@ async function fetchAlbums() {
         const json = await response.json();
         // Check for successful data return
         if (json.data && json.data.photoAlbums && json.data.photoAlbums.length > 0) {
-            console.log("✅ SUCCESS! Data received and structured.");
+            console.log("✅ SUCCESS! Data received:", json.data.photoAlbums.length, "albums");
             return json.data.photoAlbums;
         } else {
             console.warn("🟡 HYGRAPH OK (Status 200) but zero content was found. Check PUBLISHED status.");
@@ -53,55 +52,54 @@ async function fetchAlbums() {
 // 2. Build and inject the HTML tiles
 function renderGallery(allAlbums, targetCategory) {
     const grid = document.querySelector('.portfolio-grid');
-    if (!grid) return;
+    if (!grid) {
+        console.error("Error: '.portfolio-grid' element not found.");
+        return;
+    }
     
-    // Filter the content based on the current page's category (ensuring case match)
+    // Filter the content based on the current page's category (case-insensitive)
     const albumsToRender = allAlbums.filter(album => album.category.toLowerCase() === targetCategory.toLowerCase());
 
+    if (albumsToRender.length === 0) {
+        console.warn(`No albums found matching category '${targetCategory}'.`);
+        grid.innerHTML = `<p style="text-align:center;">No ${targetCategory.toLowerCase()} galleries found.</p>`;
+        return;
+    }
+
     let galleryHTML = '';
-    // --- ADD DEBUG LOG HERE ---
-    console.log(`DEBUG: Filtered ${albumsToRender.length} albums for category ${targetCategory}. Full data received:`, allAlbums);
-
     albumsToRender.forEach(album => {
-        // --- ADD DETAILED LOG INSIDE LOOP ---
-        console.log(`DEBUG: Processing Album Title: ${album.title}, Category: ${album.category}, Cover Exists: ${!!album.cover}, Gallery Images Count: ${album.galleryImages ? album.galleryImages.length : 0}`);
-
         try {
-            // ... (your existing imageList, coverImageUrl, and galleryHTML += logic) ...
+            // --- FINAL FIX: Use Bracket Notation for guaranteed secure_url access ---
+            const imageList = album.galleryImages.map(img => img['secure_url']); 
+            const imageListJSON = JSON.stringify(imageList);
+            
+            const coverImageUrl = album.cover ? album.cover['secure_url'] : '';
+            
+            const title = album.title || 'Untitled Album';
+            const subtitle = album.subtitle || '';
+
+            galleryHTML += `
+                <a href="#"
+                    class="grid-item"
+                    style="background-image: url('${coverImageUrl}');"
+                    data-images='${imageListJSON}'>
+                    <div class="grid-item-title">
+                        <h3>${title} <span>${subtitle}</span></h3>
+                    </div>
+                </a>
+            `;
         } catch (e) {
-             console.error(`CRITICAAL RENDER CRASH on album ${album.title}:`, e);
-             return; 
-         }
-    });
-
-    albumsToRender.forEach(album => {
-        // --- FINAL FIX: Access the secure_url property via safe bracket notation ---
-        const imageList = album.galleryImages.map(img => img['secure_url']); 
-        const imageListJSON = JSON.stringify(imageList);
-        
-        const coverImageUrl = album.cover ? album.cover['secure_url'] : '';
-        
-        // Fallback for missing title/subtitle
-        const title = album.title || 'Untitled Album';
-        const subtitle = album.subtitle || '';
-
-        galleryHTML += `
-            <a href="#"
-                class="grid-item"
-                style="background-image: url('${coverImageUrl}');"
-                data-images='${imageListJSON}'>
-                <div class="grid-item-title">
-                    <h3>${title} <span>${subtitle}</span></h3>
-                </div>
-            </a>
-        `;
+             console.error(`CRITICAL RENDER CRASH processing album "${album.title}":`, e);
+        }
     });
     
     // FINAL INJECTION
     grid.innerHTML = galleryHTML;
     
     // 3. Attach click handlers immediately after injection
-    if (typeof bindDynamicTileClicks !== 'undefined') {
+    if (typeof bindDynamicTileClicks !== 'function') {
+        console.error("Error: bindDynamicTileClicks function is not defined. Check lightbox-core.js.");
+    } else {
         bindDynamicTileClicks(); 
     }
 }
@@ -119,7 +117,9 @@ async function initializeDynamicContent() {
     
     if (targetCategory) {
         const allAlbums = await fetchAlbums(); 
-        renderGallery(allAlbums, targetCategory);
+        if (allAlbums && allAlbums.length > 0) {
+            renderGallery(allAlbums, targetCategory);
+        }
     }
 }
 
