@@ -821,8 +821,13 @@ img {
   letter-spacing: .18em;
   text-transform: uppercase;
   color: var(--text-dim);
-  
-  /* This padding is the key to preventing the jump */
-  padding: 6rem 0; 
   opacity: 0.8;
+  
+  /* --- REVISED FIX FOR JUMP --- */
+  /* This creates a large, stable block that pushes the */
+  /* footer and button down *before* images load. */
+  /* It also vertically centers the "Loading..." text. */
+  min-height: 70vh;
+  display: grid;
+  place-items: center;
 }
