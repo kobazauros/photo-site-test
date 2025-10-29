@@ -69,10 +69,11 @@ function renderGallery(allAlbums, targetCategory) {
         try {
             // ... (your existing imageList, coverImageUrl, and galleryHTML += logic) ...
         } catch (e) {
-             console.error(`CRITICAL RENDER CRASH on album ${album.title}:`, e);
+             console.error(`CRITICAAL RENDER CRASH on album ${album.title}:`, e);
              return; 
          }
     });
+
     albumsToRender.forEach(album => {
         // --- FINAL FIX: Access the secure_url property via safe bracket notation ---
         const imageList = album.galleryImages.map(img => img['secure_url']); 
