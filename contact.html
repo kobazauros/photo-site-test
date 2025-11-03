@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Kevin Roden Photography</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header class="main-nav">
+        <div class="nav-logo">
+            <a href="index.html" class="nav-link-style">KEVIN RODEN</a>
+        </div>
+        <nav>
+            <ul class="nav-links">
+                <li><a href="gallery.html?page=figures" class="nav-link-style">Figures</a></li>
+                <li><a href="gallery.html?page=forms" class="nav-link-style">Forms</a></li>
+                <li><a href="about.html" class="nav-link-style">About</a></li>
+                <li><a href="contact.html" class="nav-link-style">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        
+        <header class="page-header">
+            <h1>Get In Touch</h1>
+        </header>
+
+        <section class="contact-form-container">
+            <p class="contact-intro">
+                For booking inquiries, print sales, or any other questions, please fill out the form below.
+            </p>
+            
+            <form id="contact-form" action="https://formspree.io/f/mldovodp" method="POST">
+                
+                <input type="hidden" name="_next" value="https://kevinroden.vercel.app/success.html">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        required 
+                        minlength="2"    
+                        maxlength="100">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Your Email</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea 
+                        id="message" 
+                        name="message" 
+                        rows="6" 
+                        required 
+                        minlength="10"   
+                        maxlength="5000"></textarea>
+                </div>
+            </form>
+        </section>
+
+    </main>
+
+    <footer class="main-footer">
+        <p>&copy; © 2025 Kevin Roden Photography. All Rights Reserved.</p>
+    </footer>
+    
+</body>
+</html>

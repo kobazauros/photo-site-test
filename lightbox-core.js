@@ -125,7 +125,7 @@ function showImage(index) {
     if (!imgEl) return;
     currentIndex = index;
     imgEl.src = currentSet[currentIndex];
-    imgEl.onload = () => { applyPortraitClass(); enterFitMode(); };
+    imgEl.onload = () => { applyPortraitClass(); enterFitKexde(); };
 }
 function openLightbox(setArray, startIndex = 0) {
     if (!lb) return; 
@@ -306,5 +306,5 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // 3. (No specific JS needed for about.html)
+    // 3. (No specific JS needed for about.html or contact.html)
 });

@@ -62,77 +62,16 @@ img {
   border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
-/* shared nav font + hover underline */
-.main-nav a {
-  font-family: 'Playfair Display', serif;
-  font-weight: 600;
-  font-size: .9rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-
-  color: var(--text-main);
-  text-decoration: none;
-  position: relative;
-  line-height: 1.2;
-
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-  transition: color .3s ease, opacity .3s ease;
-}
-
-/* brand */
-.nav-logo a {
-  opacity: 0.9;
-}
-.nav-logo a:hover {
-  color: var(--accent-warm);
-  opacity: 1;
-}
-.nav-logo a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 1px;
-  background: var(--accent-warm);
-  border-radius: 1px;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform .25s ease;
-}
-.nav-logo a:hover::after {
-  transform: scaleX(1);
-}
-
-/* nav links (right side) */
+/* Structural rules for nav links */
 .nav-links {
   display: flex;
   list-style: none;
   gap: 2rem;
 }
-.nav-links a {
-  opacity: 0.9;
-}
-.nav-links a:hover {
-  color: var(--accent-warm);
-  opacity: 1;
-}
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px;
-  height: 1px;
-  background: var(--accent-warm);
-  border-radius: 1px;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform .25s ease;
-}
-.nav-links a:hover::after {
-  transform: scaleX(1);
-}
+
+/* All link styles are now controlled by 
+   .nav-link-style at the bottom of this file.
+*/
 
 /* =============================
    PAGE HEADER TITLES (MODELS, NATURE, ABOUT)
@@ -436,6 +375,89 @@ img {
 }
 
 /* =============================
+   CONTACT PAGE & LINKS
+   ============================= */
+
+/* Style for the "please get in touch" link on the About page */
+.contact-link {
+  color: var(--accent-warm);
+  text-decoration: none;
+  font-weight: 500;
+  border-bottom: 1px solid var(--accent-warm);
+  transition: all .3s ease;
+}
+
+.contact-link:hover {
+  background: var(--accent-warm);
+  color: var(--bg-page);
+  border-bottom-color: transparent;
+  padding: 0.1rem 0.25rem;
+  border-radius: 4px;
+}
+
+.contact-form-container {
+  max-width: 700px; /* Constrain form width */
+  margin: 0 auto;
+  padding: 0 1rem 5rem;
+}
+
+.contact-intro {
+  text-align: center;
+  color: var(--text-dim);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+  opacity: 0.9;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(0,0,0,0.2);
+  border-radius: 6px;
+  
+  font-family: 'Montserrat', system-ui, sans-serif;
+  font-size: 1rem;
+  color: var(--text-main);
+  transition: all .3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent-warm);
+  background: var(--bg-page);
+  box-shadow: 0 0 15px rgba(195, 163, 106, 0.2);
+}
+
+.form-group textarea {
+  resize: vertical; /* Allow vertical resize only */
+}
+
+/* Center the submit button */
+.form-group-submit {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* =============================
    LIGHTBOX VIEWER
    ============================= */
 
@@ -721,7 +743,7 @@ img {
 }
 
 /* =============================
-   LOAD MORE BUTTON (Nav Link Style)
+   LOAD MORE BUTTON (Container only)
    ============================= */
 
 .load-more-container {
@@ -729,69 +751,9 @@ img {
   padding: 1rem 0 5rem; /* Container still provides spacing */
 }
 
-#load-more-btn {
-  /* --- Copied from .main-nav a --- */
-  font-family: 'Playfair Display', serif;
-  font-weight: 600;
-  font-size: .9rem;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  color: var(--text-main);
-  text-decoration: none;
-  position: relative;
-  line-height: 1.2;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
-  transition: color .3s ease, opacity .3s ease;
-  opacity: 0.9;
-  
-  /* --- Button-specific resets --- */
-  background: transparent;
-  border: none;
-  padding: 0; /* Remove padding so underline sits correctly */
-  cursor: pointer;
-}
+/* Button is styled by .nav-link-style 
+*/
 
-/* --- Underline (copied from .main-nav a::after) --- */
-#load-more-btn::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -6px; /* Sits 6px below the text */
-  height: 1px;
-  background: var(--accent-warm);
-  border-radius: 1px;
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform .25s ease;
-}
-
-/* --- Hover State (copied from .main-nav a:hover) --- */
-#load-more-btn:hover {
-  color: var(--accent-warm);
-  opacity: 1;
-}
-
-/* --- Underline on Hover (copied from .main-nav a:hover::after) --- */
-#load-more-btn:hover::after {
-  transform: scaleX(1);
-}
-
-/* --- Disabled State (for "Loading...") --- */
-#load-more-btn:disabled {
-  color: #555;
-  opacity: 0.5;
-  cursor: wait;
-}
-
-/* Ensure disabled button can't be hovered */
-#load-more-btn:disabled:hover {
-  color: #555;
-  opacity: 0.5;
-}
-#load-more-btn:disabled:hover::after {
-  transform: scaleX(0); /* No underline on disabled hover */
-}
 
 /* =============================
    ANIMATIONS
@@ -807,6 +769,7 @@ img {
     transform: translateY(0);
   }
 }
+
 /* =============================
    GRID LOADER
    ============================= */
@@ -824,10 +787,104 @@ img {
   opacity: 0.8;
   
   /* --- REVISED FIX FOR JUMP --- */
-  /* This creates a large, stable block that pushes the */
-  /* footer and button down *before* images load. */
-  /* It also vertically centers the "Loading..." text. */
   min-height: 70vh;
   display: grid;
   place-items: center;
+}
+
+/* =============================
+   REUSABLE NAVIGATION LINK STYLE
+   ============================= */
+
+.nav-link-style {
+  /* --- Base font and layout --- */
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: .9rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-main);
+  text-decoration: none;
+  position: relative;
+  line-height: 1.2;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  opacity: 0.9;
+  
+  /* --- Resets for <button> elements --- */
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0; /* Base padding reset */
+  
+  /* --- Transitions --- */
+  transition: color .3s ease, opacity .3s ease;
+}
+
+/* --- Underline --- */
+.nav-link-style::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px; /* Sits 6px below the text */
+  height: 1px;
+  background: var(--accent-warm);
+  border-radius: 1px;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform .25s ease;
+}
+
+/* --- Hover State --- */
+.nav-link-style:hover {
+  color: var(--accent-warm);
+  opacity: 1;
+}
+
+/* --- Underline on Hover --- */
+.nav-link-style:hover::after {
+  transform: scaleX(1);
+}
+
+/* --- Disabled State (for "Loading...") --- */
+.nav-link-style:disabled {
+  color: #555;
+  opacity: 0.5;
+  cursor: wait;
+}
+.nav-link-style:disabled:hover {
+  color: #555;
+  opacity: 0.5;
+}
+.nav-link-style:disabled:hover::after {
+  transform: scaleX(0); /* No underline on disabled hover */
+}
+/* =============================
+   SUCCESS PAGE (Thank You)
+   ============================= */
+.success-message {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem 5rem;
+  text-align: center;
+}
+
+.success-message p {
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  font-family: 'Montserrat', system-ui, sans-serif;
+}
+
+.success-message .redirect-notice {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* We can reuse the .contact-link style from the About page */
+.success-message .contact-link {
+  font-size: 1rem;
 }
