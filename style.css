@@ -380,21 +380,21 @@ img {
 
 /* Style for the "please get in touch" link on the About page */
 .contact-link {
-  color: var(--accent-warm);
+  /* Use the main (brighter) text color to stand out */
+  color: var(--text-main);
   text-decoration: none;
   font-weight: 500;
-  border-bottom: 1px solid var(--accent-warm);
+  
+  /* Have the underline "appear" on hover */
+  border-bottom: 1px solid transparent;
   transition: all .3s ease;
 }
 
 .contact-link:hover {
-  background: var(--accent-warm);
-  color: var(--bg-page);
-  border-bottom-color: transparent;
-  padding: 0.1rem 0.25rem;
-  border-radius: 4px;
+  /* On hover, match the navigation link style */
+  color: var(--accent-warm);
+  border-bottom: 1px solid var(--accent-warm);
 }
-
 .contact-form-container {
   max-width: 700px; /* Constrain form width */
   margin: 0 auto;
