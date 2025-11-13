@@ -196,7 +196,7 @@ function buildLightboxDOM() {
     <div class="lightbox-inner">
       <img class="lightbox-img" alt="">
       <div class="protect-layer"></div>
-      <div class="lightbox-credit">© 2025 Kevin Roden Photography – No unauthorized use</div>
+      <div class="lightbox-credit">© 2025 Kevin Roden Photography</div>
     </div>
   `;
   document.body.appendChild(lb);
