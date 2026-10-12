@@ -125,7 +125,7 @@ function showImage(index) {
     if (!imgEl) return;
     currentIndex = index;
     imgEl.src = currentSet[currentIndex];
-    imgEl.onload = () => { applyPortraitClass(); enterFitKexde(); };
+    imgEl.onload = () => { applyPortraitClass(); enterFitMode(); };
 }
 function openLightbox(setArray, startIndex = 0) {
     if (!lb) return; 
@@ -196,7 +196,7 @@ function buildLightboxDOM() {
     <div class="lightbox-inner">
       <img class="lightbox-img" alt="">
       <div class="protect-layer"></div>
-      <div class="lightbox-credit">© 2025 Kevin Roden Photography</div>
+      <div class="lightbox-credit">© 2026 Kevin Roden Photography</div>
     </div>
   `;
   document.body.appendChild(lb);

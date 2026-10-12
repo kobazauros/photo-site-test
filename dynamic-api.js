@@ -197,6 +197,8 @@ async function initializeDynamicContent() {
         // Fallback or error
         console.error(`Unknown page type: ${pageType}`);
         document.querySelector('.page-header h1').textContent = 'Error';
+        if (grid) grid.innerHTML = '<p class="grid-loader">Gallery not found.</p>';
+        if (loadMoreButton) loadMoreButton.style.display = 'none';
         return;
     }
 
@@ -210,8 +212,9 @@ async function initializeDynamicContent() {
         // Load the FIRST page (offset 0)
         const initialAlbums = await fetchAlbums(currentCategory, TILES_PER_PAGE, 0); 
         
+        // Render even when empty, so the loader is replaced with a "not found" message
+        renderGallery(initialAlbums || [], currentCategory);
         if (initialAlbums && initialAlbums.length > 0) {
-            renderGallery(initialAlbums, currentCategory);
             currentOffset += TILES_PER_PAGE; // Update the offset for the *next* load
         }
         
