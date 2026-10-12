@@ -1,0 +1,8 @@
+# Text files: stored as LF in the repo, checked out as CRLF
+* text=auto eol=crlf
+
+# Binary files
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.ico binary
